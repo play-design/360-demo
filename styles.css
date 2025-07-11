@@ -82,7 +82,6 @@ iframe {
     transform: translateX(100%);
     transition: transform 0.3s ease;
     width: 100%;
-    display: none;
   }
 
   .product-details.active {
