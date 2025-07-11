@@ -17,6 +17,7 @@ main {
   height: 100vh;
   display: flex;
   flex-direction: column;
+  max-width: 100%;
 }
 
 .first-row {
@@ -60,6 +61,7 @@ iframe {
 .xr-box {
     flex: 10 0 500px;
     position: relative;
+    max-width: 100%;
 }
 
 .product-details {
