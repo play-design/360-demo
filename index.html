@@ -55,6 +55,7 @@
         const productPrice = document.getElementById('product-price');
         const productImage = document.getElementById('product-image');
         const productDescription = document.getElementById('product-description');
+        var basketItemCount = 0;
         var currentProductId = '';
         var currentProduct = null;
         const exampleProducts = [
@@ -435,6 +436,11 @@ W ofercie występuje także lampa Lank o wymiarach 18x18x43,5cm.`,
       function addToCart(productId) {
         closeProductDetails();
         console.log(`Products added to cart ${productId}`);
+        basketItemCount = basketItemCount + 1;
+
+        var cartItemCounter = document.getElementById('cart-item-count');
+        cartItemCounter.innerText = basketItemCount;
+        
       }
       
     </script>
