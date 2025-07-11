@@ -1,0 +1,423 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, minimal-ui" />
+<style> @-ms-viewport { width: device-width; } </style>
+    <title>Tour360 - embedding demo</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main>
+      <div class="first-row">
+        <iframe id="playdesign360" class="tour360"
+          src="https://vox-pano.nonprod.voxteam.pl/editor/01JZSYT7KYBDJKZE2RD84WCHTQ" name="myIframeName">
+        </iframe>
+        <div class="product-details" id="product-details">
+          <div class="product-details-inner">
+            <div class="close" onclick="closeProductDetails()"></div>
+            <h2 id="product-title" class="product-title">Product details</h2>
+            <h3 id="product-price" class="product-price"></h3>
+            <div class="product-image2">
+              <img id="product-image" />
+            </div>
+            <p style="font-size: 26px; font-weight: 400; letter-spacing: 0.05em; margin-top: 20px;">OPIS PRODUKTU</p>
+            <p id="product-description" class="product-description">
+              Click on a product hotspot to see its details here.
+            </p>
+            <button class="add-to-cart">Dodaj do koszyka</button>
+          </div>
+        </div>
+      </div>
+      <div class="carousel-container">
+        <div class="carousel-wrapper">
+          <div class="carousel-track" id="carouselTrack"></div>
+        </div>
+      </div>
+    </main>
+
+      
+      <script>
+        const tourIframe = document.getElementById('playdesign360');
+        const carouselTrack = document.getElementById('carouselTrack');
+
+        const products = document.getElementById('products-area');
+        const productTitle = document.getElementById('product-title');
+        const productPrice = document.getElementById('product-price');
+        const productImage = document.getElementById('product-image');
+        const productDescription = document.getElementById('product-description');
+        const exampleProducts = [
+          {
+            id: '19693',
+            title: 'Lampa komodowa Parma',
+            price: 699,
+            description:
+             `PARMA to jedna z wielu lamp komodowych w naszej ofercie ze szklaną podstawą.
+W tym modelu podstawa wykonana jest ze szkła dymionego ze zdobieniem, a materiałowy abażur jest w kolorze czarnym z zewnętrznej strony i w kolorze wygaszonego złota wewnątrz.
+Idealna do salonów, jadalni lub np. przestrzeni biurowych, do postawienia na komodzie czy regale.`,
+            image:
+              'https://storage.googleapis.com/vox-pim-prod/assets/file/product/main/_mg_6046.jpg',
+          },
+          {
+            id: '3739405',
+            title: 'Panele podłogowe EGGER Nature Sense Classic Dąb Loja brązowy',
+            price: 99,
+            description:
+              `klasa użytkowa: 32
+klasa ścieralności: AC4
+gwarancja 20 lat
+struktura powierzchni: Natural Pore
+rdzeń: HDF+ Board
+4-stronna V-fuga`,
+            image:
+              'https://storage.googleapis.com/vox-pim-prod/assets/file/product/main/panele-laminowane-egger-EL2077.jpg',
+          },
+          {
+            id: '84499',
+            title: 'Lustro Rig',
+            price: 299,
+            description:
+              `Lustro Rig stanowi wyrazisty akcent dekoracyjny we wnętrzu.
+Dzięki pionowemu układowi malowanych pasów może optycznie wydłużać pomieszczenie.
+Umieszczone z tyłu lustra dwie zawieszki pozwalają na montaż na ścianie.
+Akcesoria montażowe nie są dołączone.`,
+            image:
+              'https://storage.googleapis.com/vox-pim-prod/assets/file/product/main/_g6a9426_kopia.jpg',
+          },
+          {
+            id: '19245',
+            title: 'Krzesło Shell',
+            price: 699,
+            description:
+              `Lustro Rig stanowi wyrazisty akcent dekoracyjny we wnętrzu.
+Dzięki pionowemu układowi malowanych pasów może optycznie wydłużać pomieszczenie.
+Umieszczone z tyłu lustra dwie zawieszki pozwalają na montaż na ścianie.
+Akcesoria montażowe nie są dołączone.`,
+            image:
+              'https://storage.googleapis.com/vox-pim-prod/assets/file/product/main/krzeslo_shell_2017_1.jpg',
+          },
+          {
+            id: '16505',
+            title: 'Poduszka Owl',
+            price: 42,
+            description:
+              `Poduszka z nadrukowanym wzorem. W cenie zarówno poszewka jak i wypełnienie. Poszewka na zamku ułatwia czyszczenie poduszki. Stylowy dodatek kolorystyczny do kanapy czy łóżka. W połączeniu z poduszką CAT PERSON oraz BOULE stworzy nietuzinkową dekorację.`,
+            image:
+              'https://storage.googleapis.com/vox-pim-prod/assets/file/product/main/poduszka_owl_0034.jpg',
+          },
+          {
+            id: '251683',
+            title: 'Moduł pojedynczy Pelo',
+            price: 2000,
+            description:
+              `Moduł pojedynczy Pelo należy do serii tapicerowanych mebli modułowych, z których można konfigurować własne zestawy wypoczynkowe. Wyróżnia się miękkością i lekką, nowoczesną formą. Jest produkowany na indywidualne zamówienie.
+
+    Moduł Pelo składa się z szerokiego siedziska połączonego z oparciem i metalowym stelażem. Geometryczna forma nadaje meblowi minimalistyczny charakter.
+    Stosunkowo lekką bryłę można wygodnie przestawiać. Estetycznie wykończone siedzisko może zostać wyeksponowane również na środku pomieszczenia.`,
+            image:
+              'https://storage.googleapis.com/vox-pim-prod/assets/products/upholstery/PELO_MOD_POJ/sofia_pik_14.jpg',
+          },
+          {
+            id: '19192',
+            title: 'Lampa wisząca mała Lank',
+            price: 99,
+            description:
+              `Lampę Lank można wykorzystać do stworzenia wiszącego kwietnika. 
+Do tej oprawy szczególnie polecamy zakup żarówki ozdobnej o ciepłej barwie światła.
+W ofercie występuje także lampa Lank o wymiarach 18x18x43,5cm.`,
+            image:
+              'https://storage.googleapis.com/vox-pim-prod/assets/file/product/main/lank_lampa_wiszaca_mala_6671.jpg',
+          },
+          {
+            id: '14993',
+            title: 'Grafika Web biało-czarna',
+            price: 319,
+            description:
+              `szerokość: 110 cm
+               wysokość: 110 cm`,
+            image:
+              'https://storage.googleapis.com/vox-pim-prod/assets/file/product/main/grafika_web_bialyczarny.jpg',
+          },
+          {
+            id: '19755',
+            title: 'Osłona na doniczkę Ovo',
+            price: 49,
+            description:
+              `
+    Osłona OVO występuje w dwóch kształtach oraz rozmiarach.
+    Zestawione razem stworzą wyjątkową kompozycję.
+    Możesz ich używać zarówno jako osłon dla donic jak i pojemników na drobiazgi.
+`,
+            image:
+              'https://storage.googleapis.com/vox-pim-prod/assets/file/product/main/_mg_8022_kopia.jpg',
+          },
+          {
+            id: '22591',
+            title: 'Kerradeco Floral Hanging Plants',
+            price: 334.90,
+            description:
+              `
+              Panele ścienne Hanging Plants to malarska dekoracja, która wprowadza do wnętrza kojący spokój. Poziome panele układają się w efektowny wzór zwisających roślin z okrągłymi listkami. Dzięki wysokiej odporności na wilgoć i uszkodzenia nadają się do wszelkich pomieszczeń.
+`,
+            image:
+              'https://storage.googleapis.com/vox-pim-prod/assets/file/product/main/sciana_kerradeco_hanging_plants.jpg',
+          },
+          {
+            id: '10040',
+            title: 'Lustro wiszące Simple',
+            price: 599,
+            description:
+              `Lustro posiada dyskretne oświetlenie, którego źródło schowane jest za krawędzią lustrzanej tafli. Włącznik posiada możliwość regulacji natężenia światła (reguluje się je trzymając przycisk dłużej lub krócej). Oświetlenie ułatwia wykonanie wieczorowego makijażu, a także wprowadzi do sypialni nastrojowe światło. Minimalistyczny włącznik oświetlenia umieszczony jest na froncie lustra (w prawym dolnym rogu). Lustro może wisieć jako samodzielny element na ścianie lub przy toaletce z kolekcji Simple. Jego szerokość idealnie pasuje do wymiarów toaletki i gdy zawieszone jest tuż nad nią, powiększa optycznie toaletkę, tworząc z niej okrągły stolik.`,
+            image:
+              'https://storage.googleapis.com/vox-pim-prod/assets/file/product/main/lustro.jpg',
+          },
+          {
+            id: '86068',
+            title: 'Lamele ścienne Linerio L-Line',
+            price: 825,
+            description:
+              `Panele lamelowe Linerio L-Line w antracytowym kolorze mogą zostać zamontowane na ścianie lub suficie. Szerokie lamele będą efektownym dodatkiem do wnętrz urządzonych w nowoczesnym stylu. Pozwolą wyróżnić wybraną strefę pomieszczenia i wyciszyć przestrzeń. Produkt cechuje się lekkością i trwałością.`,
+            image:
+              'https://storage.googleapis.com/vox-pim-prod/assets/file/product/arrangement/22.05.17_vox_tapicerka64311_linerio_anthracite_l_m_s2.jpg',
+          },
+          {
+            id: '92198',
+            title: 'Szafa 4-drzwiowa Creative',
+            price: 3909,
+            description:
+              `4-drzwiowa szafa Creative to pojemna garderoba, którą łatwo dopasujesz do swoich potrzeb. Z innowacyjnym systemem meblowym Creative możesz dowolnie konfigurować układ półek, drążków na ubrania i szuflad oraz decydować o wyglądzie mebla..`,
+            image:
+              'https://vox.pl/_next/image?url=https%3A%2F%2Fstorage.googleapis.com%2Fvox-pim-prod%2Fassets%2Ffile%2Fproduct%2Fpreset%2Fwitryna-4.jpg&w=1920&q=75',
+          }
+
+
+          
+        ];
+
+        function sendMessage(msg) {
+          tourIframe.contentWindow.postMessage(msg, '*');
+        }
+
+        function closeProductDetails() {
+          const productDetails = document.getElementById('product-details');
+          productDetails.classList.remove('active');
+        }
+
+        const myPlaydesignPrefix = 'playdesign:myIframeName';
+        let currentHotspots = [];
+
+        const handleMessage = (event) => {
+          if (event.data?.type.startsWith(myPlaydesignPrefix)) {
+            if (event.data.type === `${myPlaydesignPrefix}:hotspotClicked`) {
+              const clickedId = event.data.hotspot.id;
+              const hotspotIndex = currentHotspots
+                .filter((h) => h.type === 'product')
+                .findIndex((h) => h.id === clickedId);
+              if (hotspotIndex !== -1) {
+                console.log('Hotspot clicked:', event.data.hotspot, hotspotIndex);
+                const product = exampleProducts.find(o => o.id == clickedId);
+                productTitle.textContent = product.title;
+                productImage.src = product.image;
+                productImage.alt = product.title;
+                productPrice.textContent = `${product.price} zł`;
+                productDescription.textContent = product.description;
+                const productDetails = document.getElementById('product-details');
+                productDetails.classList.add('active');
+              }
+            }
+            if (event.data.type === `${myPlaydesignPrefix}:viewpointChanged`) {
+              currentHotspots = event.data.hotspots || [];
+
+              carouselTrack.innerHTML = currentHotspots
+                .filter((h) => h.type === 'product')
+                .map(({ id, productId }, index) => {
+                  const product = exampleProducts.find(o => o.id == productId);
+
+                  if (product == null)
+                    return;
+
+                  return `
+                  <div class="product-card" data-id="${id}">
+                    <div class="product-image" style="background-image: url(${product.image});">
+                        <div class="bestseller-badge">BESTSELLER</div>
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-title">${product.title}</h3>
+                        <div class="product-price">${product.price} zł</div>
+                    </div>
+                  </div>
+                `;
+                })
+                .join('');    
+
+
+              carouselTrack.querySelectorAll('.product-card').forEach((tile) => {
+                tile.addEventListener('click', () => {
+                  const hotspotId = tile.getAttribute('data-id');
+
+                  let eda = window.innerWidth <= 768 ? false : true;
+
+                  sendMessage({
+                    type: `${myPlaydesignPrefix}:focusHotspot`,
+                    data: {
+                      id: hotspotId,
+                      executeDefaultAction: eda, // optional - default is `false`
+                      zoom: 60, // optional
+                      speed: 1000, // optional - default is `300`
+                      easing: 'outCubic', // optional - default is `nOutSine`
+                    },
+                  });
+                });
+              });
+            }
+          }
+        };
+
+        window.addEventListener('message', handleMessage);
+
+        function getRandomHotspotId() {
+          const randomIndex = Math.floor(Math.random() * currentHotspots.length);
+          const randomHotspot = currentHotspots[randomIndex];
+          return randomHotspot.id;
+        }
+      </script>
+
+
+      <script>
+        let currentSlide = 0;
+        const track = document.getElementById('carouselTrack');
+        const cards = document.querySelectorAll('.product-card');
+        const indicatorsContainer = document.getElementById('indicators');
+        
+        // Oblicz liczbę widocznych slajdów na podstawie szerokości ekranu
+        function getVisibleSlides() {
+            const containerWidth = document.querySelector('.carousel-wrapper').offsetWidth;
+            const cardWidth = 300; // 280px + 20px gap
+            return Math.floor(containerWidth / cardWidth);
+        }
+        
+        // Oblicz maksymalny indeks slajdu
+        function getMaxSlide() {
+            const visibleSlides = getVisibleSlides();
+            return Math.max(0, cards.length - visibleSlides);
+        }
+        
+        // Stwórz wskaźniki
+        function createIndicators() {
+            indicatorsContainer.innerHTML = '';
+            const maxSlide = getMaxSlide();
+            
+            for (let i = 0; i <= maxSlide; i++) {
+                const indicator = document.createElement('div');
+                indicator.className = 'indicator';
+                if (i === 0) indicator.classList.add('active');
+                indicator.onclick = () => goToSlide(i);
+                indicatorsContainer.appendChild(indicator);
+            }
+        }
+        
+        // Przejdź do konkretnego slajdu
+        function goToSlide(slideIndex) {
+            const maxSlide = getMaxSlide();
+            currentSlide = Math.max(0, Math.min(slideIndex, maxSlide));
+            
+            const cardWidth = 300;
+            const offset = currentSlide * cardWidth;
+            track.style.transform = `translateX(-${offset}px)`;
+            
+            // Aktualizuj wskaźniki
+            document.querySelectorAll('.indicator').forEach((indicator, index) => {
+                indicator.classList.toggle('active', index === currentSlide);
+            });
+        }
+        
+        // Przesuń karuzelę
+        function moveCarousel(direction) {
+            goToSlide(currentSlide + direction);
+        }
+        
+        // Automatyczne przesuwanie
+        function autoSlide() {
+            const maxSlide = getMaxSlide();
+            if (currentSlide >= maxSlide) {
+                currentSlide = 0;
+            } else {
+                currentSlide++;
+            }
+            goToSlide(currentSlide);
+        }
+        
+        // Obsługa gestów dotykowych
+        let startX = 0;
+        let currentX = 0;
+        let isDragging = false;
+        
+        track.addEventListener('touchstart', (e) => {
+            startX = e.touches[0].clientX;
+            isDragging = true;
+        });
+        
+        track.addEventListener('touchmove', (e) => {
+            if (!isDragging) return;
+            currentX = e.touches[0].clientX;
+            const diff = startX - currentX;
+            
+            if (Math.abs(diff) > 50) {
+                if (diff > 0) {
+                    moveCarousel(1);
+                } else {
+                    moveCarousel(-1);
+                }
+                isDragging = false;
+            }
+        });
+        
+        track.addEventListener('touchend', () => {
+            isDragging = false;
+        });
+        
+        // Obsługa zmiany rozmiaru okna
+        window.addEventListener('resize', () => {
+            createIndicators();
+            goToSlide(0);
+        });
+        
+        // Inicjalizacja
+        createIndicators();
+        
+        // Automatyczne przesuwanie co 5 sekund
+        setInterval(autoSlide, 5000);
+        
+        // Obsługa przycisków "Dodaj do koszyka"
+        document.querySelectorAll('.add-to-cart').forEach(button => {
+            button.addEventListener('click', function() {
+                const productTitle = this.closest('.product-card').querySelector('.product-title').textContent;
+                
+                // Animacja przycisku
+                this.style.transform = 'scale(0.95)';
+                this.textContent = 'Dodano!';
+                this.style.background = '#27ae60';
+                
+                setTimeout(() => {
+                    this.style.transform = 'scale(1)';
+                    this.textContent = 'Dodaj do koszyka';
+                    this.style.background = '';
+                }, 2000);
+                
+                // Symulacja dodania do koszyka
+                console.log(`Dodano do koszyka: ${productTitle}`);
+            });
+        });
+    </script>
+  
+    
+    <div class="basket-icon">
+      <button id="cart-button" type="button" name="" data-testid="" class="nav_user_panel css-j09otw">
+        <div class="cart-item-count" id="cart-item-count">0</div></span>
+        <span class="button-children-wrapper css-zu2kpv"><span class="icon  css-1ttmhm5" style="display: block;padding: 8px 3px 1px 2px;">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="#FFF" width="2em" height="2em" viewBox="0 0 44 32"><path d="m43.631.925-4.986 18.85H13.698L9.409 3.028H1.331v-2h9.63l4.289 16.747h21.855L41.697.414zM14.899 26.816c0-2.847 2.271-5.187 5.112-5.187s5.112 2.339 5.112 5.187c0 2.847-2.272 5.187-5.112 5.187s-5.112-2.339-5.112-5.187m5.112-3.186c-1.701 0-3.112 1.41-3.112 3.187s1.41 3.187 3.112 3.187c1.701 0 3.112-1.41 3.112-3.187s-1.41-3.187-3.112-3.187m7.217 3.186c0-2.847 2.272-5.187 5.112-5.187s5.112 2.339 5.112 5.187c0 2.847-2.272 5.187-5.112 5.187s-5.112-2.339-5.112-5.187m5.111-3.186c-1.701 0-3.112 1.41-3.112 3.187s1.41 3.187 3.112 3.187c1.701 0 3.112-1.41 3.112-3.187s-1.41-3.187-3.112-3.187"></path></svg>
+        </span>
+      </button>
+    </div>
+  </body>
+</html>
