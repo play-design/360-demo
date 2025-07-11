@@ -6,26 +6,33 @@
 <style> @-ms-viewport { width: device-width; } </style>
     <title>Tour360 - embedding demo</title>
     <link rel="stylesheet" href="./styles.css" />
+    <script src="./cart.js"></script>
+    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.1.0/model-viewer.min.js"></script>
   </head>
   <body>
     <main>
       <div class="first-row">
-        <iframe id="playdesign360" class="tour360"
-          src="https://vox-pano.nonprod.voxteam.pl/editor/01JZSYT7KYBDJKZE2RD84WCHTQ" name="myIframeName">
-        </iframe>
+        <div class="xr-box">
+          <iframe id="playdesign360"
+                  src="https://vox-pano.nonprod.voxteam.pl/editor/01JZSYT7KYBDJKZE2RD84WCHTQ" name="myIframeName">
+          </iframe>
+          <div class="modelview" id="model-viewer">
+            
+          </div>
+        </div>
         <div class="product-details" id="product-details">
           <div class="product-details-inner">
             <div class="close" onclick="closeProductDetails()"></div>
             <h2 id="product-title" class="product-title">Product details</h2>
             <h3 id="product-price" class="product-price"></h3>
-            <div class="product-image2">
-              <img id="product-image" />
+            <div class="product-image2" onclick="openModelViewer()">
+              <img id="product-image"  />
             </div>
             <p style="font-size: 26px; font-weight: 400; letter-spacing: 0.05em; margin-top: 20px;">OPIS PRODUKTU</p>
             <p id="product-description" class="product-description">
               Click on a product hotspot to see its details here.
             </p>
-            <button class="add-to-cart">Dodaj do koszyka</button>
+            <button onclick="addToCart()" class="add-to-cart">Dodaj do koszyka</button>
           </div>
         </div>
       </div>
@@ -40,12 +47,16 @@
       <script>
         const tourIframe = document.getElementById('playdesign360');
         const carouselTrack = document.getElementById('carouselTrack');
+        
+        const modelViewer = document.getElementById('model-viewer');
 
         const products = document.getElementById('products-area');
         const productTitle = document.getElementById('product-title');
         const productPrice = document.getElementById('product-price');
         const productImage = document.getElementById('product-image');
         const productDescription = document.getElementById('product-description');
+        var currentProductId = '';
+        var currentProduct = null;
         const exampleProducts = [
           {
             id: '19693',
@@ -55,8 +66,8 @@
              `PARMA to jedna z wielu lamp komodowych w naszej ofercie ze szklaną podstawą.
 W tym modelu podstawa wykonana jest ze szkła dymionego ze zdobieniem, a materiałowy abażur jest w kolorze czarnym z zewnętrznej strony i w kolorze wygaszonego złota wewnątrz.
 Idealna do salonów, jadalni lub np. przestrzeni biurowych, do postawienia na komodzie czy regale.`,
-            image:
-              'https://storage.googleapis.com/vox-pim-prod/assets/file/product/main/_mg_6046.jpg',
+            image: 'https://storage.googleapis.com/vox-pim-prod/assets/file/product/main/_mg_6046.jpg',
+            glb: './files/516c1e25-1771-4795-a08f-9fe726358087.glb'
           },
           {
             id: '3739405',
@@ -83,6 +94,7 @@ Umieszczone z tyłu lustra dwie zawieszki pozwalają na montaż na ścianie.
 Akcesoria montażowe nie są dołączone.`,
             image:
               'https://storage.googleapis.com/vox-pim-prod/assets/file/product/main/_g6a9426_kopia.jpg',
+            glb: 'https://storage.googleapis.com/vox-iguana-pl-staging/data/uploads/misc/ea35d5f7-4f0e-43dd-8980-1a16e5bf8afe'
           },
           {
             id: '19245',
@@ -202,6 +214,17 @@ W ofercie występuje także lampa Lank o wymiarach 18x18x43,5cm.`,
           const productDetails = document.getElementById('product-details');
           productDetails.classList.remove('active');
         }
+        
+        function closeModelViewer() {
+          modelViewer.classList.remove('active');
+        }
+
+        function openModelViewer() {
+          modelViewer.innerHTML = `
+          <model-viewer style="width:100%; height:100%;" ar shadow-intensity="1" camera-controls src="${currentProduct.glb}" touch-action="pan-y"></model-viewer>
+          <div class="close" onClick="closeModelViewer()"></div>`;
+          modelViewer.classList.add('active');
+        }
 
         const myPlaydesignPrefix = 'playdesign:myIframeName';
         let currentHotspots = [];
@@ -223,6 +246,10 @@ W ofercie występuje także lampa Lank o wymiarach 18x18x43,5cm.`,
                 productDescription.textContent = product.description;
                 const productDetails = document.getElementById('product-details');
                 productDetails.classList.add('active');
+                currentProductId = clickedId;
+                
+                currentProduct = product;
+                
               }
             }
             if (event.data.type === `${myPlaydesignPrefix}:viewpointChanged`) {
@@ -287,7 +314,6 @@ W ofercie występuje także lampa Lank o wymiarach 18x18x43,5cm.`,
         let currentSlide = 0;
         const track = document.getElementById('carouselTrack');
         const cards = document.querySelectorAll('.product-card');
-        const indicatorsContainer = document.getElementById('indicators');
         
         // Oblicz liczbę widocznych slajdów na podstawie szerokości ekranu
         function getVisibleSlides() {
@@ -300,20 +326,6 @@ W ofercie występuje także lampa Lank o wymiarach 18x18x43,5cm.`,
         function getMaxSlide() {
             const visibleSlides = getVisibleSlides();
             return Math.max(0, cards.length - visibleSlides);
-        }
-        
-        // Stwórz wskaźniki
-        function createIndicators() {
-            indicatorsContainer.innerHTML = '';
-            const maxSlide = getMaxSlide();
-            
-            for (let i = 0; i <= maxSlide; i++) {
-                const indicator = document.createElement('div');
-                indicator.className = 'indicator';
-                if (i === 0) indicator.classList.add('active');
-                indicator.onclick = () => goToSlide(i);
-                indicatorsContainer.appendChild(indicator);
-            }
         }
         
         // Przejdź do konkretnego slajdu
@@ -410,6 +422,17 @@ W ofercie występuje także lampa Lank o wymiarach 18x18x43,5cm.`,
         });
     </script>
   
+    <script>
+      
+      function addToCart(productId) {
+        closeProductDetails();
+        console.log(`Products added to cart ${productId}`);
+      }
+      
+    </script>
+    
+    
+    
     
     <div class="basket-icon">
       <button id="cart-button" type="button" name="" data-testid="" class="nav_user_panel css-j09otw">
